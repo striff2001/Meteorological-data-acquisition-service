@@ -8,14 +8,6 @@ import java.util.Scanner;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-/*
-1. Сделайте GET запрос используя путь: https://api.weather.yandex.ru/v2/forecast.
-2. Передайте координаты точки lat и lon, в которой хотите определить погоду, например: https://api.weather.yandex.ru/v2/forecast?lat=55.75&lon=37.62.
-3. Выведите на экран все данные (весь ответ от сервиса в формате json) и отдельно температуру (находится в fact {temp}).
-4. Вычислить среднюю температуру за определенный период (передать limit и найти среднее арифметическое температуры).
-
- */
-
 public class Main {
 
     private static final String apiKey = "033dbcba-53e1-43ee-a9ed-6b89ea456dd5";
@@ -25,10 +17,7 @@ public class Main {
             .build();
 
     public static void main(String[] args) {
-       // String lat = "55.38"; // широта
-       // String lon = "37.39"; // долгота
-       // int limit = 7;      // Количество дней для расчета средней температуры
-
+        // Получаем константы от пользователя
         Scanner scanner = new Scanner(System.in);
             System.out.println("Введите широту: ");
             String lat = scanner.nextLine();
@@ -39,8 +28,8 @@ public class Main {
             System.out.println("Введите количество дней для расчета средней температуры: ");
             int limit = Integer.parseInt(scanner.nextLine());
 
-
         try {
+            // Запрос к сервису Яндекс погоды
             String response = makeApiRequest(lat, lon, limit);
             System.out.println("Полный ответ от сервиса: ");
             System.out.println(response);
@@ -49,6 +38,7 @@ public class Main {
             int currentTemp = jsonResponse.getJSONObject("fact").getInt("temp");
             System.out.println("Текущая температура: " + currentTemp + " градусов");
 
+            // Расчет средней температуры
             double avgTemp = averageTemperature(jsonResponse, limit);
             String text = String.format("Средняя температура за %d дней: %f градусов", limit, avgTemp);
             System.out.println(text);
@@ -58,6 +48,7 @@ public class Main {
 
     }
 
+    // Метод для получения всех данных от API Яндекс погоды
     private static String makeApiRequest(String lat, String lon, int limit) throws Exception {
         String url = String.format("%s?lat=%s&lon=%s&limit=%d", baseURL, lat, lon, limit);
         HttpRequest request = HttpRequest.newBuilder()
@@ -70,6 +61,7 @@ public class Main {
         return response.body();
     }
 
+    // Метод для расчета средней температуры
     private static double averageTemperature(JSONObject jsonResponse, int limit) {
         JSONArray forecasts = jsonResponse.getJSONArray("forecasts");
         double sum =0;
